@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Federico Pohle</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F4F2EE;
+      --bg-card:  #EDEAE4;
+      --ink:      #111110;
+      --ink-mid:  #4A4845;
+      --ink-low:  #888580;
+      --accent:   #C8420A;
+      --line:     #D8D4CC;
+      --nav-bg:   rgba(244,242,238,0.88);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Barlow', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    html.dark {
+      --bg:       #141412;
+      --bg-card:  #1E1C1A;
+      --ink:      #F0EDE8;
+      --ink-mid:  #A8A49E;
+      --ink-low:  #605C58;
+      --accent:   #E05A20;
+      --line:     #2E2B28;
+      --nav-bg:   rgba(20,20,18,0.90);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--ink-mid);
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+      background: var(--bg-card);
+    }
+
+    .theme-toggle svg { pointer-events: none; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding-top: 60px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      min-height: calc(100vh - 60px);
+    }
+
+    .left {
+      padding: 80px 48px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .error-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .error-code {
+      font-family: var(--font-display);
+      font-size: clamp(96px, 12vw, 160px);
+      font-weight: 700;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+
+    .error-msg {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.5vw, 32px);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      margin-bottom: 48px;
+    }
+
+    .error-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      border-left: 2px solid var(--accent);
+      padding-left: 20px;
+      max-width: 380px;
+      margin-bottom: 48px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      text-decoration: none;
+      transition: all 0.15s;
+      width: fit-content;
+    }
+
+    .back-btn:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* ── RIGHT — CAD ERROR DRAWING ── */
+    .right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cad-drawing {
+      width: 100%;
+      max-width: 480px;
+      opacity: 0.55;
+    }
+
+    html.dark .cad-drawing {
+      opacity: 0.35;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .error-tag  { animation: fadeUp 0.5s ease both; animation-delay: 0.1s; }
+    .error-code { animation: fadeUp 0.5s ease both; animation-delay: 0.2s; }
+    .error-msg  { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+    .error-desc { animation: fadeUp 0.5s ease both; animation-delay: 0.4s; }
+    .back-btn   { animation: fadeUp 0.5s ease both; animation-delay: 0.5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .container { grid-template-columns: 1fr; }
+      .left { padding: 60px 24px; border-right: none; }
+      .right { display: none; }
+      footer { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">FP</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <div class="left">
+        <p class="error-tag">Error — Page not found</p>
+        <h1 class="error-code">404</h1>
+        <p class="error-msg">Nothing here.</p>
+        <p class="error-desc">
+          The page you're looking for doesn't exist or has been moved.
+          Check the URL or head back to the portfolio.
+        </p>
+        <a href="index.html" class="back-btn">← Back to Portfolio</a>
+      </div>
+
+      <div class="right">
+        <svg class="cad-drawing" viewBox="0 0 480 380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid404" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="0.3" opacity="0.4"/>
+            </pattern>
+          </defs>
+          <rect width="480" height="380" fill="url(#grid404)"/>
+
+          <!-- Broken part outline -->
+          <g stroke="currentColor" fill="none">
+            <rect x="80" y="80" width="320" height="220" stroke-width="1" opacity="0.3"/>
+            <!-- Main shape with break -->
+            <polyline points="140,280 140,140 200,140 200,180 280,180 280,140 340,140 340,280" stroke-width="1.5" opacity="0.8"/>
+            <!-- Break lines -->
+            <line x1="140" y1="280" x2="180" y2="280" stroke-width="1.5" opacity="0.8"/>
+            <line x1="210" y1="280" x2="260" y2="280" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
+            <line x1="290" y1="280" x2="340" y2="280" stroke-width="1.5" opacity="0.8"/>
+            <!-- Break indicator -->
+            <polyline points="180,272 190,280 180,288" stroke-width="1" opacity="0.6" stroke="#C8420A" fill="none"/>
+            <polyline points="290,272 280,280 290,288" stroke-width="1" opacity="0.6" stroke="#C8420A" fill="none"/>
+          </g>
+
+          <!-- Dimension lines -->
+          <g stroke="currentColor" stroke-width="0.8" opacity="0.5" fill="none">
+            <line x1="140" y1="310" x2="340" y2="310"/>
+            <line x1="140" y1="304" x2="140" y2="316"/>
+            <line x1="340" y1="304" x2="340" y2="316"/>
+            <line x1="60" y1="140" x2="60" y2="280"/>
+            <line x1="54" y1="140" x2="66" y2="140"/>
+            <line x1="54" y1="280" x2="66" y2="280"/>
+          </g>
+
+          <!-- Labels -->
+          <g font-family="monospace" font-size="9" fill="currentColor" opacity="0.5">
+            <text x="220" y="324">REF: NULL</text>
+            <text x="30" y="214" transform="rotate(-90 30 214)">MISSING</text>
+          </g>
+
+          <!-- Error mark -->
+          <g stroke="#C8420A" stroke-width="1.5" opacity="0.7">
+            <circle cx="240" cy="210" r="20" fill="none"/>
+            <line x1="233" y1="203" x2="247" y2="217"/>
+            <line x1="247" y1="203" x2="233" y2="217"/>
+          </g>
+
+          <!-- Corner markers -->
+          <g stroke="currentColor" stroke-width="0.8" opacity="0.3">
+            <path d="M80,95 L80,80 L95,80"/>
+            <path d="M385,95 L400,80 L385,80" transform="translate(15,0)"/>
+            <path d="M80,285 L80,300 L95,300"/>
+            <path d="M385,285 L400,300 L385,300" transform="translate(15,0)"/>
+          </g>
+        </svg>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>Federico Pohle · 3D Designer &amp; Electronics Engineer</span>
+    <span>2025</span>
+  </footer>
+
+  <script>
+    const html = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const iconMoon = document.getElementById('icon-moon');
+    const iconSun  = document.getElementById('icon-sun');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      iconMoon.style.display = dark ? 'none'  : 'block';
+      iconSun.style.display  = dark ? 'block' : 'none';
+    }
+
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved === 'dark');
+
+    toggle.addEventListener('click', () => {
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      applyTheme(!isDark);
+    });
+  </script>
+</body>
+</html>
