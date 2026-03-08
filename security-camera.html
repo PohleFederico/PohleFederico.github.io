@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Camera — Federico Pohle</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F4F2EE;
+      --bg-card:  #EDEAE4;
+      --ink:      #111110;
+      --ink-mid:  #4A4845;
+      --ink-low:  #888580;
+      --accent:   #C8420A;
+      --line:     #D8D4CC;
+      --nav-bg:   rgba(244,242,238,0.88);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Barlow', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    html.dark {
+      --bg:       #141412;
+      --bg-card:  #1E1C1A;
+      --ink:      #F0EDE8;
+      --ink-mid:  #A8A49E;
+      --ink-low:  #605C58;
+      --accent:   #E05A20;
+      --line:     #2E2B28;
+      --nav-bg:   rgba(20,20,18,0.90);
+    }
+
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--ink-mid);
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+      background: var(--bg-card);
+    }
+
+    .theme-toggle svg { pointer-events: none; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--accent); }
+
+    /* ── PROJECT HEADER ── */
+    .project-header {
+      padding-top: 60px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .project-header-inner {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      min-height: 260px;
+    }
+
+    .project-header-left {
+      padding: 60px 48px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb span { color: var(--accent); }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 5vw, 80px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      line-height: 0.92;
+      margin-bottom: 20px;
+    }
+
+    .project-subtitle {
+      font-size: 15px;
+      color: var(--ink-mid);
+      max-width: 500px;
+      line-height: 1.65;
+    }
+
+    .project-header-right {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 0;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .spec-row:first-child { border-top: 1px solid var(--line); }
+
+    .spec-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+    }
+
+    .spec-value {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .spec-value.accent { color: var(--accent); }
+
+    /* ── 3D VIEWER ── */
+    .viewer-section {
+      padding: 0 48px;
+      margin-top: 0;
+    }
+
+    .viewer-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 32px 0 20px;
+    }
+
+    .viewer-label-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+    }
+
+    .viewer-label-line {
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .sketchfab-embed-wrapper {
+      width: 100%;
+      border: 1px solid var(--line);
+      position: relative;
+      background: var(--bg-card);
+    }
+
+    .sketchfab-embed-wrapper iframe {
+      display: block;
+      width: 100%;
+      height: 580px;
+      border: none;
+    }
+
+    /* placeholder for when there's no Sketchfab model yet */
+    .viewer-placeholder {
+      width: 100%;
+      height: 580px;
+      background: var(--bg-card);
+      border: 1px dashed var(--line);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .viewer-placeholder p {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+    }
+
+    .viewer-hint {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.06em;
+      padding: 12px 48px;
+      border-top: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    /* ── IMAGE GALLERY ── */
+    .gallery-section {
+      padding: 0 48px;
+      margin-top: 64px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-top: 20px;
+    }
+
+    .gallery-item {
+      background: var(--bg-card);
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      cursor: zoom-in;
+      position: relative;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, filter 0.3s;
+      filter: grayscale(5%);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+      filter: grayscale(0%);
+    }
+
+    .gallery-item-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 8px 12px;
+      background: rgba(244,242,238,0.92);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .gallery-item:hover .gallery-item-label { opacity: 1; }
+
+    /* placeholder gallery items */
+    .gallery-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #E0DDD7 0%, #CCCAC3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+    }
+
+    /* ── TECHNICAL NOTES ── */
+    .tech-section {
+      padding: 64px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-top: 64px;
+    }
+
+    .tech-block {
+      background: var(--bg);
+      padding: 40px 40px;
+    }
+
+    .tech-block-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tech-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink-mid);
+    }
+
+    .tech-list li::before {
+      content: '—';
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── PROCESS / NARRATIVE ── */
+    .process-section {
+      padding: 64px 48px;
+    }
+
+    .process-body {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      margin-top: 24px;
+    }
+
+    .process-body p {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--ink-mid);
+    }
+
+    @media (max-width: 900px) {
+      .process-section { padding: 48px 24px; }
+    }
+
+    /* ── DOWNLOADS ── */
+    .downloads-section {
+      padding: 48px;
+    }
+
+    .downloads-grid {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .download-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      transition: all 0.15s;
+      min-width: 200px;
+    }
+
+    .download-item:hover {
+      border-color: var(--ink);
+      background: var(--bg-card);
+    }
+
+    .download-icon {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      text-transform: uppercase;
+      min-width: 36px;
+    }
+
+    .download-info { flex: 1; }
+
+    .download-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .download-size {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--ink-low);
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* ── NEXT PROJECT ── */
+    .next-project {
+      border-top: 1px solid var(--line);
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+    }
+
+    .next-project:hover { background: var(--bg-card); }
+
+    .next-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+      margin-bottom: 6px;
+    }
+
+    .next-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .next-arrow {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--ink-low);
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .next-project:hover .next-arrow {
+      color: var(--accent);
+      transform: translateX(8px);
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(17,17,16,0.95);
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(244,242,238,0.6);
+      cursor: pointer;
+      transition: color 0.15s;
+      background: none;
+      border: none;
+    }
+
+    .lightbox-close:hover { color: #fff; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .project-header-inner { grid-template-columns: 1fr; }
+      .project-header-left { padding: 48px 24px 32px; border-right: none; border-bottom: 1px solid var(--line); }
+      .project-header-right { padding: 32px 24px; }
+      .viewer-section { padding: 0 24px; }
+      .sketchfab-embed-wrapper iframe { height: 300px; }
+      .gallery-section { padding: 0 24px; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .tech-section { grid-template-columns: 1fr; padding: 0; }
+      .downloads-section { padding: 32px 24px; }
+      .next-project { padding: 32px 24px; }
+      footer { padding: 24px; }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .project-title  { animation: fadeUp 0.5s ease both; animation-delay: 0.1s; }
+    .project-subtitle { animation: fadeUp 0.5s ease both; animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">FP</a>
+    <a href="index.html" class="nav-back">← All Projects</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- PROJECT HEADER -->
+  <header class="project-header">
+    <div class="project-header-inner">
+      <div class="project-header-left">
+        <div class="breadcrumb"><a href="index.html" style="color:var(--ink-low);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-low)'">Work</a> / <span>Product Design</span></div>
+        <h1 class="project-title">Security<br>Camera</h1>
+        <p class="project-subtitle">
+          A concise description of the project. What problem it solves, 
+          what constraints defined the design, and what makes it worth showing.
+          Two to three sentences is ideal.
+        </p>
+      </div>
+
+      <div class="project-header-right">
+        <!-- Replace with your actual specs -->
+        <div class="spec-row">
+          <span class="spec-label">Category</span>
+          <span class="spec-value">Product Design</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Software</span>
+          <span class="spec-value">SolidWorks · KeyShot</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Material</span>
+          <span class="spec-value">ABS / Al 6061</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Tolerance</span>
+          <span class="spec-value accent">± 0.05 mm</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Standard</span>
+          <span class="spec-value">ISO 2768-m</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Year</span>
+          <span class="spec-value">2025</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3D VIEWER -->
+  <section class="viewer-section">
+    <div class="viewer-label">
+      <span class="viewer-label-text">Interactive 3D Model</span>
+      <div class="viewer-label-line"></div>
+      <span class="viewer-label-text">Sketchfab</span>
+    </div>
+
+    <!--
+      REPLACE THIS PLACEHOLDER with your Sketchfab embed.
+      Go to your Sketchfab model → Share → Embed
+      Paste the <iframe> tag here inside .sketchfab-embed-wrapper
+    -->
+    <div class="sketchfab-embed-wrapper">
+      <iframe title="Security_Camera" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/91367fab81fe49e79e4fa3f3766e1701/embed?ui_theme=dark" style="width:100%;height:580px;border:none;display:block;"></iframe>
+    </div>
+    <p class="viewer-hint">Drag to rotate · Scroll to zoom · Right-click to pan</p>
+  </section>
+
+  <!-- IMAGE GALLERY -->
+  <section class="gallery-section">
+    <div class="viewer-label">
+      <span class="viewer-label-text">Project Images</span>
+      <div class="viewer-label-line"></div>
+    </div>
+
+    <div class="gallery-grid" id="gallery">
+      <!-- Replace each gallery-placeholder with an <img> tag -->
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Render 01</div>
+        <div class="gallery-item-label">Final Render — Front</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Render 02</div>
+        <div class="gallery-item-label">Final Render — 3/4 View</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Detail</div>
+        <div class="gallery-item-label">Component Detail</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Technical Drawing</div>
+        <div class="gallery-item-label">Mechanical Drawing</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Exploded View</div>
+        <div class="gallery-item-label">Exploded Assembly</div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <div class="gallery-placeholder">Process</div>
+        <div class="gallery-item-label">CAD Screenshot</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS / NARRATIVE -->
+  <section class="process-section">
+    <div class="viewer-label">
+      <span class="viewer-label-text">Process & Problem Solving</span>
+      <div class="viewer-label-line"></div>
+    </div>
+
+    <div class="process-body">
+      <p>
+        Write your full project narrative here. Describe the context, problems encountered,
+        how you approached each challenge, and the final outcome. This is a single continuous
+        block — format it however you prefer.
+      </p>
+    </div>
+  </section>
+
+  <!-- TECHNICAL NOTES -->
+  <section class="tech-section">
+    <div class="tech-block">
+      <h3 class="tech-block-title">Design Decisions</h3>
+      <ul class="tech-list">
+        <li>Why this geometry was chosen over alternatives</li>
+        <li>Material selection rationale and trade-offs</li>
+        <li>Key constraint that shaped the final form</li>
+        <li>Manufacturing method considered during design</li>
+      </ul>
+    </div>
+    <div class="tech-block">
+      <h3 class="tech-block-title">Technical Specs</h3>
+      <ul class="tech-list">
+        <li>Overall dimensions: 00 × 00 × 00 mm</li>
+        <li>Critical tolerance zones: ±0.05 mm on mating surfaces</li>
+        <li>Surface finish: Ra 0.8 μm on functional faces</li>
+        <li>Thread standard: M3 × 0.5 — ISO 68-1</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DOWNLOADS -->
+  <section class="downloads-section">
+    <div class="viewer-label">
+      <span class="viewer-label-text">Files & Documents</span>
+      <div class="viewer-label-line"></div>
+    </div>
+
+    <div class="downloads-grid">
+      <a href="#" class="download-item">
+        <span class="download-icon">PDF</span>
+        <div class="download-info">
+          <div class="download-name">Technical Drawing</div>
+          <div class="download-size">Replace with actual file link</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:14px;color:var(--ink-low);">↓</span>
+      </a>
+      <a href="#" class="download-item">
+        <span class="download-icon">STEP</span>
+        <div class="download-info">
+          <div class="download-name">3D Model</div>
+          <div class="download-size">Replace with actual file link</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:14px;color:var(--ink-low);">↓</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <a href="project.html?id=2" class="next-project">
+    <div>
+      <div class="next-label">Next Project</div>
+      <div class="next-title">Project Name Two</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Federico Pohle · 3D Designer &amp; Electronics Engineer</span>
+    <div style="display:flex;gap:24px;align-items:center;">
+      <a href="https://github.com/yourusername" target="_blank" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-low);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-low)'">GitHub</a>
+      <a href="https://linkedin.com/in/yourprofile" target="_blank" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-low);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-low)'">LinkedIn</a>
+      <a href="https://artstation.com/yourprofile" target="_blank" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-low);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-low)'">ArtStation</a>
+      <a href="/cdn-cgi/l/email-protection#364f59434476535b575f5a1855595b" style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-low);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink-low)'">Mail</a>
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-low);letter-spacing:0.08em;">2025</span>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── DARK MODE ──
+    const html = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const iconMoon = document.getElementById('icon-moon');
+    const iconSun  = document.getElementById('icon-sun');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      iconMoon.style.display = dark ? 'none'  : 'block';
+      iconSun.style.display  = dark ? 'block' : 'none';
+    }
+
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved === 'dark');
+
+    toggle.addEventListener('click', () => {
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      applyTheme(!isDark);
+    });
+
+    // ── LIGHTBOX ──
+    function openLightbox(el) {
+      const img = el.querySelector('img');
+      if (!img) return;
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>
