@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Federico Pohle — Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111110'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='17' fill='%23F4F2EE' letter-spacing='-1'%3EFP%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F4F2EE;
+      --bg-card:  #EDEAE4;
+      --ink:      #111110;
+      --ink-mid:  #4A4845;
+      --ink-low:  #888580;
+      --accent:   #C8420A;
+      --line:     #D8D4CC;
+      --nav-bg:   rgba(244,242,238,0.88);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Barlow', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    html.dark {
+      --bg:       #141412;
+      --bg-card:  #1E1C1A;
+      --ink:      #F0EDE8;
+      --ink-mid:  #A8A49E;
+      --ink-low:  #605C58;
+      --accent:   #E05A20;
+      --line:     #2E2B28;
+      --nav-bg:   rgba(20,20,18,0.90);
+    }
+
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--ink-mid);
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+      background: var(--bg-card);
+    }
+
+    .theme-toggle svg { pointer-events: none; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--ink); }
+
+    /* ── HERO ── */
+    .hero {
+      padding-top: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
+
+    .hero-left {
+      padding: 80px 48px 64px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      border-right: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Blurred CAD background behind the name */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.12;      /* ← ajustá este valor: 0.0 invisible, 1.0 completo */
+      filter: blur(6px);  /* ← más número = más difuminado */
+    }
+
+    html.dark .hero-bg img {
+      opacity: 0.18;
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(244,242,238,0.75) 0%, rgba(244,242,238,0.55) 100%);
+    }
+
+    html.dark .hero-bg::after {
+      background: linear-gradient(120deg, rgba(20,20,18,0.80) 0%, rgba(20,20,18,0.65) 100%);
+    }
+
+    .hero-left > *:not(.hero-bg) { position: relative; z-index: 1; }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 7vw, 108px);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 32px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2vw, 26px);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .hero-title span.divider {
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-bio {
+      max-width: 400px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink-mid);
+      border-left: 2px solid var(--accent);
+      padding-left: 20px;
+    }
+
+    .hero-right {
+      padding: 80px 48px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 48px;
+    }
+
+    .hero-disciplines {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .discipline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .discipline:hover {
+      border-color: var(--ink);
+      background: var(--bg-card);
+    }
+
+    .discipline-name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .discipline-tools {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.06em;
+    }
+
+    .featured-project {
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      transition: border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+      min-height: 380px;
+    }
+
+    .featured-project:hover { border-color: var(--ink); }
+
+    .featured-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .featured-info {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-right: 1px solid var(--line);
+      justify-content: space-between;
+    }
+
+    .featured-name {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .featured-desc {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--ink-mid);
+      flex: 1;
+    }
+
+    .featured-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .featured-image {
+      background: var(--bg-card);
+      overflow: hidden;
+      position: relative;
+      min-height: 380px;
+    }
+
+    .featured-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      inset: 0;
+      transition: transform 0.5s ease;
+      filter: grayscale(8%);
+    }
+
+    .featured-project:hover .featured-image img { transform: scale(1.03); }
+
+    .featured-image .thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      background: linear-gradient(135deg, #E0DDD7 0%, #CCCAC3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 64px 48px 40px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .section-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-low);
+      letter-spacing: 0.08em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ── PROJECT GRID ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      margin: 0 48px;
+    }
+
+    .project-card {
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .project-card:hover { background: var(--bg-card); }
+
+    .project-card:hover .project-thumb img {
+      transform: scale(1.03);
+    }
+
+    .project-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: var(--bg-card);
+      position: relative;
+    }
+
+    .project-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+      filter: grayscale(8%);
+    }
+
+    /* placeholder thumbnail */
+    .project-thumb .thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #E0DDD7 0%, #CCCAC3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .thumb-placeholder svg {
+      opacity: 0.25;
+    }
+
+    .project-category-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--ink-mid);
+    }
+
+    .project-info {
+      padding: 24px 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-number {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--ink-mid);
+      flex: 1;
+    }
+
+    .project-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-low);
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+    }
+
+    .project-arrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-low);
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .project-card:hover .project-arrow {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    /* ── CONTACT STRIP ── */
+    .contact-strip {
+      margin: 64px 48px 0;
+      border: 1px solid var(--line);
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .contact-left h2 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 8px;
+    }
+
+    .contact-left p {
+      font-size: 14px;
+      color: var(--ink-mid);
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .contact-link:hover,
+    .contact-link.primary {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .contact-link.primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin: 24px 48px 0;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-low);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-tag    { animation: fadeUp 0.6s ease both; animation-delay: 0.1s; }
+    .hero-name   { animation: fadeUp 0.6s ease both; animation-delay: 0.2s; }
+    .hero-title  { animation: fadeUp 0.6s ease both; animation-delay: 0.3s; }
+    .hero-bio    { animation: fadeUp 0.6s ease both; animation-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 60px 24px 40px; border-right: none; border-bottom: 1px solid var(--line); }
+      .hero-right { padding: 40px 24px; }
+      .section-header { padding: 48px 24px 32px; }
+      .filter-bar { padding: 0 24px 32px; }
+      .projects-grid { grid-template-columns: 1fr; margin: 0 24px; }
+      .contact-strip { flex-direction: column; align-items: flex-start; margin: 48px 24px 0; padding: 32px; }
+      footer { margin: 24px 24px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">FP</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <!-- Reemplazá "cad-background.webp" con el nombre de tu archivo -->
+      <div class="hero-bg">
+        <img src="cad-background.webp" alt="">
+      </div>
+
+      <p class="hero-tag">Portfolio 2025</p>
+      <h1 class="hero-name">Federico<br>Pohle</h1>
+      <p class="hero-title">
+        3D Designer
+        <span class="divider"></span>
+        Electronics Engineer
+      </p>
+      <p class="hero-bio" id="about">
+        Bridging industrial product design and electronic systems engineering.
+        Precision-focused work in mechanical CAD, product development, and 
+        PCB component design with tight manufacturing tolerances.
+      </p>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-disciplines">
+        <div class="discipline">
+          <span class="discipline-name">Product Design</span>
+          <span class="discipline-tools">SolidWorks · KeyShot · Blender</span>
+        </div>
+        <div class="discipline">
+          <span class="discipline-name">Electronics in CAD</span>
+          <span class="discipline-tools">Altium · KiCad · STEP/IGES</span>
+        </div>
+        <div class="discipline">
+          <span class="discipline-name">Precision Engineering</span>
+          <span class="discipline-tools">GD&amp;T · ISO 2768 · DFM</span>
+        </div>
+      </div>
+
+      <!-- FEATURED PROJECT -->
+      <div>
+        <p class="featured-label">Featured Project</p>
+        <a href="project.html?id=1" class="featured-project">
+          <div class="featured-info">
+            <div class="featured-name">Project Name One</div>
+            <p class="featured-desc">
+              Brief description of the project — material, process, design intent.
+              What makes it technically relevant and worth showcasing first.
+            </p>
+            <div class="featured-tags">
+              <span class="tag">SolidWorks</span>
+              <span class="tag">KeyShot</span>
+              <span class="tag">DFM</span>
+            </div>
+          </div>
+          <div class="featured-image">
+            <!-- Replace with: <img src="your-image.jpg" alt="Project Name One"> -->
+            <div class="thumb-placeholder">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <div id="work">
+    <div class="section-header">
+      <h2 class="section-title">Selected Work</h2>
+      <span class="section-count">04 Projects</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- CARD 1 -->
+      <a href="project.html?id=1" class="project-card" data-category="product-design">
+        <div class="project-thumb">
+          <!-- Replace src with your render image -->
+          <div class="thumb-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <span class="project-category-badge">Product Design</span>
+        </div>
+        <div class="project-info">
+          <div class="project-number">001</div>
+          <h3 class="project-name">Project Name One</h3>
+          <p class="project-desc">
+            Brief description of the project — material, process, design intent.
+            Keep it to 2–3 sentences maximum.
+          </p>
+          <div class="project-meta">
+            <div class="project-tags">
+              <span class="tag">SolidWorks</span>
+              <span class="tag">KeyShot</span>
+              <span class="tag">DFM</span>
+            </div>
+            <span class="project-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 2 -->
+      <a href="project.html?id=2" class="project-card" data-category="electronics">
+        <div class="project-thumb">
+          <div class="thumb-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1">
+              <circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <span class="project-category-badge">Electronics in CAD</span>
+        </div>
+        <div class="project-info">
+          <div class="project-number">002</div>
+          <h3 class="project-name">Project Name Two</h3>
+          <p class="project-desc">
+            Technical component modeled to manufacturer specs. Tolerances
+            verified against IPC-7351 land pattern standards.
+          </p>
+          <div class="project-meta">
+            <div class="project-tags">
+              <span class="tag">Altium</span>
+              <span class="tag">STEP</span>
+              <span class="tag">±0.02mm</span>
+            </div>
+            <span class="project-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 3 -->
+      <a href="project.html?id=3" class="project-card" data-category="product-design">
+        <div class="project-thumb">
+          <div class="thumb-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="project-category-badge">Product Design</span>
+        </div>
+        <div class="project-info">
+          <div class="project-number">003</div>
+          <h3 class="project-name">Project Name Three</h3>
+          <p class="project-desc">
+            End-to-end product concept from industrial sketching through
+            parametric CAD and photorealistic rendering.
+          </p>
+          <div class="project-meta">
+            <div class="project-tags">
+              <span class="tag">Blender</span>
+              <span class="tag">Render</span>
+              <span class="tag">Concept</span>
+            </div>
+            <span class="project-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 4 -->
+      <a href="project.html?id=4" class="project-card" data-category="electronics">
+        <div class="project-thumb">
+          <div class="thumb-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <span class="project-category-badge">Electronics in CAD</span>
+        </div>
+        <div class="project-info">
+          <div class="project-number">004</div>
+          <h3 class="project-name">Project Name Four</h3>
+          <p class="project-desc">
+            Full PCB component library entry — courtyard, 3D model, and
+            mechanical drawing included for manufacturing handoff.
+          </p>
+          <div class="project-meta">
+            <div class="project-tags">
+              <span class="tag">KiCad</span>
+              <span class="tag">IPC-7351</span>
+              <span class="tag">3D Model</span>
+            </div>
+            <span class="project-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-strip" id="contact">
+    <div class="contact-left">
+      <h2>Let's Work Together</h2>
+      <p>Open to freelance projects and full-time opportunities.</p>
+    </div>
+    <div class="contact-links">
+      <a href="https://github.com/yourusername" class="contact-link" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/yourprofile" class="contact-link" target="_blank">LinkedIn</a>
+      <a href="/cdn-cgi/l/email-protection#473e28323507222a262e2b6924282a" class="contact-link primary">
+        Get in Touch
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-left:8px;">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <span>Federico Pohle · 3D Designer &amp; Electronics Engineer</span>
+    <span>2025</span>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── DARK MODE ──
+    const html = document.documentElement;
+    const toggle = document.getElementById('themeToggle');
+    const iconMoon = document.getElementById('icon-moon');
+    const iconSun  = document.getElementById('icon-sun');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      iconMoon.style.display = dark ? 'none'  : 'block';
+      iconSun.style.display  = dark ? 'block' : 'none';
+    }
+
+    // Apply saved preference immediately (before paint)
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved === 'dark');
+
+    toggle.addEventListener('click', () => {
+      const isDark = html.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      applyTheme(!isDark);
+    });
+  </script>
+</body>
+</html>
